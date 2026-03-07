@@ -1,1 +1,8 @@
-@import "tailwindcss"
+@import "tailwindcss";
+
+.btn-primary{
+    color:white;
+    background-color: green;
+    border:none;
+
+}
