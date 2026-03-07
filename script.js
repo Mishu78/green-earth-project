@@ -1,6 +1,8 @@
 const categoriesContainer=document.getElementById('categoriesContainer');
 const treesContainer=document.getElementById('treesContainer');
 const loadingSpinner=document.getElementById('loadingSpinner');
+const allTress =document.getElementById('attTreesbtn')
+
 async function loadCategories(){
 const res= await fetch('https://openapi.programming-hero.com/api/categories')
  const data= await res.json()
@@ -10,13 +12,44 @@ const res= await fetch('https://openapi.programming-hero.com/api/categories')
     const btn=document.createElement('button');
     btn.className="btn btn-outline w-full";
     btn.textContent=category.category_name;
+    btn.onclick =()=>selectCategory(category.id,btn);
     categoriesContainer.appendChild(btn);
  });
 };
-function showLoading(){
-  loadingSpinner.classList.add('hidden')
+async function selectCategory(categoryId,btn){
+  console.log(categoryId,btn);
+  showLoading();
+  
+  const allButton= document.querySelectorAll("#categoriesContainer button , #allTreesbtn")
+  
+
+allButton.forEach((btn)=>{
+btn.classList.remove('btn-primary');
+btn.classList.add('btn-outline');
+});
+allTreesbtn.classList.add('btn-primary');
+allTreesbtn.classList.remove('btn-outline');
+
+loadTrees();
+const res=await fetch(`https://openapi.programming-hero.com/api/category/${categoryId}`)
+const data= await res.json();
+displayTrees(data.plants);
+hideLoading();
 }
+
+allTreesbtn.addEventListener('click',()=>{
+  const allButton= document.querySelectorAll("#categoriesContainer button , #allTreesbtn")
+  
+
+allButton.forEach((btn)=>{
+btn.classList.remove('btn-primary');
+btn.classList.add('btn-outline');
+});
+})
 function hideLoading(){
+  loadingSpinner.classList.add('hidden');
+}
+function showLoading(){
   loadingSpinner.classList.remove('hidden');
 }
 
@@ -27,9 +60,11 @@ const data=await res.json();
 hideLoading();
 console.log(data);
 displayTrees(data.plants);
-
+hideLoading();
 }
+
 function displayTrees(trees){
+  treesContainer.innerHTML="";
 console.log(trees);
 trees.forEach((tree) => {
 console.log(tree);
