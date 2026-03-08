@@ -1,7 +1,13 @@
 const categoriesContainer=document.getElementById('categoriesContainer');
 const treesContainer=document.getElementById('treesContainer');
 const loadingSpinner=document.getElementById('loadingSpinner');
-const allTress =document.getElementById('attTreesbtn')
+const allTreesbtn =document.getElementById('allTreesbtn');
+const treeDetailsModal =document.getElementById('tree-details-modal')
+const modalImage=document.getElementById('modalImage');
+const modalCategory=document.getElementById('modalCategory');
+const modalDescription=document.getElementById('modalDescription');
+const modalPrice=document.getElementById('modalPrice');
+const modalTitle=document.getElementById('modalTitle');
 
 async function loadCategories(){
 const res= await fetch('https://openapi.programming-hero.com/api/categories')
@@ -19,18 +25,20 @@ const res= await fetch('https://openapi.programming-hero.com/api/categories')
 async function selectCategory(categoryId,btn){
   console.log(categoryId,btn);
   showLoading();
-  
-  const allButton= document.querySelectorAll("#categoriesContainer button , #allTreesbtn")
+
+const allButton= document.querySelectorAll("#categoriesContainer button , #allTreesbtn")
   
 
 allButton.forEach((btn)=>{
 btn.classList.remove('btn-primary');
 btn.classList.add('btn-outline');
 });
-allTreesbtn.classList.add('btn-primary');
-allTreesbtn.classList.remove('btn-outline');
+btn.classList.add('btn-primary');
+btn.classList.remove('btn-outline');
 
-loadTrees();
+
+
+  
 const res=await fetch(`https://openapi.programming-hero.com/api/category/${categoryId}`)
 const data= await res.json();
 displayTrees(data.plants);
@@ -45,6 +53,8 @@ allButton.forEach((btn)=>{
 btn.classList.remove('btn-primary');
 btn.classList.add('btn-outline');
 });
+allTreesbtn.classList.add('btn-primary');
+allTreesbtn.classList.remove('btn-outline');
 })
 function hideLoading(){
   loadingSpinner.classList.add('hidden');
@@ -57,7 +67,6 @@ async function loadTrees(){
   showLoading();
 const res = await fetch('https://openapi.programming-hero.com/api/plants')
 const data=await res.json();
-hideLoading();
 console.log(data);
 displayTrees(data.plants);
 hideLoading();
@@ -76,10 +85,11 @@ card.innerHTML= `
       src="${tree.image}"
       alt="${tree.name}"
       title="${tree.name}"
+      onclick="openTreeModal(${tree.id})"
       class="h-48 object-cover w-full"/>
   </figure>
   <div class="card-body">
-    <h2 class="card-title">${tree.name}</h2>
+    <h2 class="card-title cursor-pointer hover:text-green-500"onclick="openTreeModal(${tree.id})">${tree.name}</h2>
     <p class="line-clamp-2">${tree.description}</p>
     <div class="badge badge-success">${tree.category}</div>
     <div class="card-actions justify-between items-center">
@@ -90,6 +100,21 @@ card.innerHTML= `
   `
   treesContainer.appendChild(card);
 });
+}
+
+async function openTreeModal(treeId){
+  console.log(treeId,"treeId");
+  const res= await fetch(`https://openapi.programming-hero.com/api/plant/${treeId}`);
+  const data= await res.json();
+  const plantDetails=data.plants;
+  console.log(plantDetails);
+  console.log(data,'data');
+  modalTitle.textContent=plantDetails.name;
+  modalImage.src=plantDetails.image;
+  modalCategory.textContent=plantDetails.category;
+  modalDescription.textContent=plantDetails.description;
+  modalPrice.textContent=plantDetails.price;
+  treeDetailsModal.showModal();
 }
 loadCategories();
 loadTrees();
